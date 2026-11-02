@@ -1,10 +1,51 @@
 {% extends "auth_app/layout/app.html" %}
 
 {% block title %}Dashboard{% endblock %}
+{% block card_class %}card-wide{% endblock %}
 
 {% block content %}
-    <h2>Dashboard</h2>
-    <p>Welcome, {{ user.username }}!</p>
-    <p>You are logged in.</p>
-    <a href="{% url 'logout' %}">Logout</a>
+    <div class="page-header">
+        <div>
+            <h2>Welcome, {{ user.username }}!</h2>
+            <p class="subtext">Here is a quick look at your tasks.</p>
+        </div>
+        <a class="btn btn-primary" href="{% url 'add_task' %}">+ Add Task</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box stat-total">
+            <span class="stat-number">{{ total }}</span>
+            <span class="stat-label">Total tasks</span>
+        </div>
+        <div class="stat-box stat-done">
+            <span class="stat-number">{{ done }}</span>
+            <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat-box stat-pending">
+            <span class="stat-number">{{ pending }}</span>
+            <span class="stat-label">Pending</span>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h3>Recent Tasks</h3>
+        <a href="{% url 'task_list' %}">View all →</a>
+    </div>
+
+    <ul class="task-list">
+        {% for task in recent_tasks %}
+            <li class="task-item">
+                <div class="task-info">
+                    <span class="task-title {% if task.is_done %}done-text{% endif %}">{{ task.title }}</span>
+                    {% if task.is_done %}
+                        <span class="badge badge-done">Done</span>
+                    {% else %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% endif %}
+                </div>
+            </li>
+        {% empty %}
+            <li class="empty">No tasks yet. Add your first one!</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

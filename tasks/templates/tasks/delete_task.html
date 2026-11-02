@@ -1,0 +1,17 @@
+{% extends "auth_app/layout/app.html" %}
+
+{% block title %}Delete Task{% endblock %}
+{% block card_class %}card-medium{% endblock %}
+
+{% block content %}
+    <h2>Delete Task</h2>
+    <p>Are you sure you want to delete <strong>{{ task.title }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger-solid">Yes, delete</button>
+            <a class="btn btn-light" href="{% url 'task_list' %}">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

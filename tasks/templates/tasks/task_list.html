@@ -1,0 +1,42 @@
+{% extends "auth_app/layout/app.html" %}
+
+{% block title %}My Tasks{% endblock %}
+{% block card_class %}card-wide{% endblock %}
+
+{% block content %}
+        <div class="section-header">
+        <a href="{% url 'dashboard' %}">← Back to dashboard</a>
+    </div>
+    <div class="page-header">
+        <h2>My Tasks</h2>
+        <a class="btn btn-primary" href="{% url 'add_task' %}">+ Add Task</a>
+    </div>
+
+    <ul class="task-list">
+        {% for task in tasks %}
+            <li class="task-item">
+                <div class="task-info">
+                    <span class="task-title {% if task.is_done %}done-text{% endif %}">{{ task.title }}</span>
+                    {% if task.is_done %}
+                        <span class="badge badge-done">Done</span>
+                    {% else %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% endif %}
+                </div>
+
+                <div class="task-actions">
+                    <form method="post" action="{% url 'toggle_task' task.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-light">
+                            {% if task.is_done %}Undo{% else %}Mark done{% endif %}
+                        </button>
+                    </form>
+                    <a class="btn btn-sm btn-light" href="{% url 'edit_task' task.pk %}">Edit</a>
+                    <a class="btn btn-sm btn-danger" href="{% url 'delete_task' task.pk %}">Delete</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="empty">No tasks yet. Add your first one!</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
+from tasks.models import Task
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -40,7 +40,14 @@ def login_view(request):
 
 @login_required
 def dashboard_view(request):
-    return render(request, "auth_app/dashboard.html")
+    tasks = Task.objects.filter(owner=request.user)
+    context = {
+        'total': tasks.count(),
+        'done': tasks.filter(is_done=True).count(),
+        'pending': tasks.filter(is_done=False).count(),
+        'recent_tasks': tasks.order_by('-created_at')[:5],
+    }
+    return render(request, 'auth_app/dashboard.html', context)
 
 
 def logout_view(request):

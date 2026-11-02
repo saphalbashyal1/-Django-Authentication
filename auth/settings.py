@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'auth_app',
+    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +120,7 @@ USE_TZ = True
 
 LOGIN_URL="login"
 STATIC_URL = 'static/'
+STATICFILES_DIRS=[BASE_DIR/'static']
 
 
 # Email

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,43 +10,50 @@
            Auth App 
         {% endblock %}
     </title>
-        <style>
-        body { font-family: Arial, sans-serif; background: #f2f4f8; margin: 0; }
-        nav { background: #2c3e50; padding: 12px 24px; }
-        nav a { color: white; margin-right: 16px; text-decoration: none; }
-        .card { max-width: 400px; margin: 40px auto; background: white;
-                padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
-        input { width: 100%; padding: 8px; margin: 6px 0 12px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #2c3e50; color: white;
-                 border: none; border-radius: 4px; cursor: pointer; }
-        .msg { padding: 10px; margin-bottom: 12px; border-radius: 4px; background: #dff0d8; }
-        .errorlist { color: red; padding-left: 16px; }
-        .helptext { font-size: 12px; color: #777; }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 </head>
 <body>
-    <nav>
+    <nav class="navbar">
+    <a class="brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}">
+        TaskHub
+    </a>
+        {% if not user.is_authenticated %}
+        <span class="tagline">Organize your day, one task at a time.</span>
+    {% endif %}
+
+    <div class="nav-links">
         {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}">Dashboard</a>
-        <a href="{% url 'logout' %}">Logout</a>
-
+            <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{% url 'task_list' %}" class="{% if request.resolver_match.url_name == 'task_list' %}active{% endif %}">Tasks</a>
+            <span class="nav-user">{{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="nav-btn">Logout</a>
         {% else %}
-        <a href="{% url "register" %}">Register</a>
-        <a href="{% url "login" %}">Login</a>
-
+            <a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
+            <a href="{% url 'register' %}" class="nav-btn">Register</a>
         {% endif %}
-    </nav>
-
-    <div class="card">
-        {% for message in messages%}
-        <div class="msg">
-            {{message}}
-        </div>
-        {% endfor %}
-
-        {%block content%}
-        {% endblock %}
     </div>
+</nav>
+    {% if not user.is_authenticated %}
+        <div class="intro">
+            <h1>Welcome to TaskHub</h1>
+            <p>Create your account, add your tasks and track your progress, all in one place.</p>
+        </div>
+    {% endif %}
+    <div class="card {% block card_class %}{% endblock %}">
+            {% for message in messages %}
+        <div class="msg">{{ message }}</div>
+    {% endfor %}
+
+    {% block content %}
+    {% endblock %}
+    </div>
+        <script>
+        setTimeout(function () {
+            document.querySelectorAll('.msg').forEach(function (m) {
+                m.style.display = 'none';
+            });
+        }, 3000);
+    </script>
 </body>
 </html>
